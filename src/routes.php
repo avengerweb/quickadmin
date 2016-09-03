@@ -29,7 +29,7 @@ if (Schema::hasTable('menus')) {
 
                         break;
                     case 3:
-                        \Log::error('Route::controller is unsupported: ' . $menu);
+//                        \Log::error('Route::controller is unsupported: ' . $menu);
                         Route::get(strtolower($menu->name), [
                             'as' => strtolower($menu->name) . '.index',
                             'uses' => 'Admin\\' . ucfirst(camel_case($menu->name)) . 'Controller@index'
