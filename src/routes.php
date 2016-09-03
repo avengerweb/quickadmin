@@ -15,22 +15,25 @@ if (Schema::hasTable('menus')) {
             'middleware' => ['web', 'auth', 'role'],
             'prefix'     => config('quickadmin.route'),
             'namespace'  => 'App\Http\Controllers',
+            'as'         => config('quickadmin.route'). "."
         ], function () use ($menus) {
             foreach ($menus as $menu) {
                 switch ($menu->menu_type) {
                     case 1:
                         Route::post(strtolower($menu->name) . '/massDelete', [
-                            'as'   => config('quickadmin.route') . '.' . strtolower($menu->name) . '.massDelete',
+                            'as'   => strtolower($menu->name) . '.massDelete',
                             'uses' => 'Admin\\' . ucfirst(camel_case($menu->name)) . 'Controller@massDelete'
                         ]);
                         Route::resource(strtolower($menu->name),
                             'Admin\\' . ucfirst(camel_case($menu->name)) . 'Controller', ['except' => 'show']);
+
                         break;
                     case 3:
-                        Route::controller(strtolower($menu->name),
-                            'Admin\\' . ucfirst(camel_case($menu->name)) . 'Controller', [
-                                'getIndex' => config('quickadmin.route') . '.' . strtolower($menu->name) . '.index',
-                            ]);
+                        \Log::error('Route::controller is unsupported: ' . $menu);
+                        Route::get(strtolower($menu->name), [
+                            'as' => strtolower($menu->name) . '.index',
+                            'uses' => 'Admin\\' . ucfirst(camel_case($menu->name)) . 'Controller@index'
+                        ]);
                         break;
                 }
             }
@@ -117,19 +120,7 @@ Route::group([
         Route::resource('roles', 'RolesController');
     });
     // Authentication routes...
-    Route::get('login', 'Auth\AuthController@getLogin');
-    Route::post('login', 'Auth\AuthController@postLogin');
-    Route::get('logout', 'Auth\AuthController@getLogout');
+    Route::get('logout', 'Auth\LoginController@logout');
 
-    // Registration routes...
-    Route::get('register', 'Auth\AuthController@getRegister');
-    Route::post('register', 'Auth\AuthController@postRegister');
-
-    // Password reset link request routes...
-    Route::get('password/email', 'Auth\PasswordController@getEmail');
-    Route::post('password/email', 'Auth\PasswordController@postEmail');
-
-    // Password reset routes...
-    Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
-    Route::post('password/reset', 'Auth\PasswordController@postReset');
+    Route::auth();
 });
