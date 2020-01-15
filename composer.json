@@ -16,7 +16,7 @@
   "require": {
     "laravelcollective/html": "^6.0",
     "intervention/image": "^2.3",
-    "yajra/laravel-datatables-oracle": "~6.0"
+    "yajra/laravel-datatables-oracle": "~9.0"
   },
   "classmap": [
     "src/Controllers",
